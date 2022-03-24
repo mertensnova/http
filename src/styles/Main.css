@@ -1,0 +1,123 @@
+.main-section {
+   width: 65%;
+   margin-left: 475px;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+}
+
+.intro {
+   width: 90%;
+   height: 90vh;
+   display: flex;
+   align-items: flex-start;
+   justify-content: center;
+   flex-direction: column;
+   border-bottom: solid 2px #efefef;
+}
+
+div {
+   font-size: 3rem;
+   color: var(--light-grey);
+}
+.intro p {
+   font-size: 1rem;
+   color: var(--light-grey);
+   margin: 40px 0;
+}
+
+.btn-container {
+   width: 90%;
+}
+.learn-more {
+   width: 180px;
+   height: 50px;
+   border: none;
+   outline: none;
+   border: solid 3px #efefef;
+   background: transparent;
+   font-family: "Roboto", sans-serif;
+   color: var(--light-grey);
+   transition: all 0.4s ease;
+   cursor: pointer;
+   font-size: 1.1rem;
+}
+
+.learn-more:hover {
+   color: var(--color-green);
+   border: solid 3px var(--color-green);
+}
+
+.projects {
+   width: 90%;
+   margin: 30px 0;
+}
+
+.title {
+   width: 100%;
+   font-size: 3rem;
+}
+
+.works {
+   width: 100%;
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
+   margin: 20px 0;
+   justify-content: space-evenly;
+}
+
+.item {
+   width: 350px;
+   height: 250px;
+   margin: 20px 0;
+}
+
+.img-box {
+   width: 100%;
+   height: 75%;
+   position: relative;
+}
+
+.view {
+   position: absolute;
+   left: 50%;
+   margin-left: -20px;
+   z-index: 2;
+   top: 50%;
+   margin-top: -20px;
+   border: none;
+   background: transparent;
+   outline: none;
+   border: solid 3px #efefef;
+   transition: all 0.4s ease;
+   cursor: pointer;
+   width: 40px;
+   height: 30px;
+}
+
+.view a {
+   font-family: "Roboto", sans-serif;
+   color: #efefef;
+   text-decoration: none;
+}
+.img-box img {
+   width: 100%;
+   height: 100%;
+   border-radius: 10px;
+   cursor: pointer;
+   transition: all 0.4s ease;
+}
+.img-box img:hover {
+   filter: brightness(50%);
+   transform: translateY(-4px);
+}
+.name {
+   font-size: 1.3rem;
+   margin: 15px 0;
+   color: var(--dark-grey);
+}
+.made {
+   font-size: 0.8rem;
+}
