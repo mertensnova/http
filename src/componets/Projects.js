@@ -1,9 +1,31 @@
-import React, { useState } from "react";
+import React from "react";
+import NetflixImg from "../Images/Desktop.png";
+import RESTImg from "../Images/color.jpg";
+import SpaceImg from "../Images/space.png";
+import ManageImg from "../Images/manage.jpg";
 
 const Projects = () => {
    const Netflix = (e) => {
       e.preventDefault();
-      window.location = "http://www.google.com/";
+      window.location = "https://netflix-2-0-ten.vercel.app/";
+   };
+
+   const REST = (e) => {
+      e.preventDefault();
+      window.location = "https://optimistic-lovelace-ea9a29.netlify.app/";
+   };
+   const Space = (e) => {
+      e.preventDefault();
+      window.location = "https://jolly-turing-08c5a4.netlify.app/";
+   };
+   const Manage = (e) => {
+      e.preventDefault();
+      window.location = "https://zealous-pike-311385.netlify.app/";
+   };
+
+   const seeMore = (e) => {
+      e.preventDefault();
+      window.location = "https://github.com/amr8644";
    };
 
    return (
@@ -12,18 +34,47 @@ const Projects = () => {
             <p>My Projects</p>
          </div>
          <div className="works">
+            {/* One Item */}
             <div className="item">
                <div className="img-box">
-                  <img
-                     src="https://images.unsplash.com/photo-1647971447454-8093ed0f8e3d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHwyMnx8fGVufDB8fHx8&auto=format&fit=crop&w=500&q=60"
-                     alt="Netflix"
-                     onClick={Netflix}
-                  />
+                  <img src={NetflixImg} alt="Netflix" onClick={Netflix} />
                </div>
 
                <p className="name">Netflix Clone</p>
                <p className="made">Made using: React JS and TailWind CSS</p>
             </div>
+            {/* One Item */}
+            <div className="item">
+               <div className="img-box">
+                  <img src={RESTImg} alt="Color" onClick={REST} />
+               </div>
+
+               <p className="name">REST Countries API</p>
+               <p className="made">Made using: HTML, CSS, and,JavaScript</p>
+            </div>
+            {/* One Item */}
+            <div className="item">
+               <div className="img-box">
+                  <img src={SpaceImg} alt="Netflix" onClick={Space} />
+               </div>
+
+               <p className="name">Space tourism </p>
+               <p className="made">Made using: HTML, CSS, and,JavaScript</p>
+            </div>
+            {/* One Item */}
+            <div className="item">
+               <div className="img-box">
+                  <img src={ManageImg} alt="Manage" onClick={Manage} />
+               </div>
+
+               <p className="name">Manage landing page</p>
+               <p className="made">Made using: React JS and TailWind CSS</p>
+            </div>
+         </div>
+         <div className="btn-container">
+            <button className="see-more" onClick={seeMore}>
+               See More
+            </button>
          </div>
       </article>
    );
