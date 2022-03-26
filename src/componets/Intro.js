@@ -6,7 +6,7 @@ export const Intro = () => {
       <article className="intro">
          <Typewriter
             onInit={(typewriter) => {
-               typewriter.typeString("Hello There !").start();
+               typewriter.typeString("Hi there!").start();
             }}
          />
          <p>
@@ -15,9 +15,6 @@ export const Intro = () => {
             CSS JavaScript and React JS.I also have some knowledge in back-end
             development.
          </p>
-         <div className="btn-container">
-            <button className="learn-more">Learn More</button>
-         </div>
       </article>
    );
 };

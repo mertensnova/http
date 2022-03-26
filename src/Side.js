@@ -33,7 +33,6 @@ const Side = () => {
                </a>
             </div>
             <div className="others">
-               <p>© Untitled</p>
                <p>
                   Design: <a href="https://html5up.net/">HTML5</a>
                </p>

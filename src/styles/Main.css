@@ -1,10 +1,10 @@
 .main-section {
    width: 65%;
-   margin-left: 475px;
    display: flex;
    align-items: center;
    justify-content: center;
    flex-direction: column;
+   float: right;
 }
 
 .intro {
@@ -16,11 +16,34 @@
    flex-direction: column;
    border-bottom: solid 2px #efefef;
 }
+.header {
+   align-items: center;
+   justify-content: center;
+   flex-direction: column;
+   height: 300px;
+   width: 100%;
+   background-image: url(../Images/bg.jpg);
+   background-repeat: no-repeat;
+   background-size: cover;
+   display: none;
+   font-size: 1.5rem;
+   text-align: center;
+}
+.header span {
+   color: white;
+}
+.header img {
+   width: 90px;
+   height: 90px;
+   margin: 10px 0;
+   border-radius: 9999px;
+}
 
 div {
    font-size: 3rem;
    color: var(--light-grey);
 }
+
 .intro p {
    font-size: 1rem;
    color: var(--light-grey);
@@ -85,31 +108,8 @@ div {
 .img-box {
    width: 100%;
    height: 75%;
-   position: relative;
 }
 
-.view {
-   position: absolute;
-   left: 50%;
-   margin-left: -20px;
-   z-index: 2;
-   top: 50%;
-   margin-top: -20px;
-   border: none;
-   background: transparent;
-   outline: none;
-   border: solid 3px #efefef;
-   transition: all 0.4s ease;
-   cursor: pointer;
-   width: 40px;
-   height: 30px;
-}
-
-.view a {
-   font-family: "Roboto", sans-serif;
-   color: #efefef;
-   text-decoration: none;
-}
 .img-box img {
    width: 100%;
    height: 100%;
@@ -134,6 +134,9 @@ div {
 .email {
    width: 90%;
    border-top: solid 2px #efefef;
+   display: flex;
+   align-items: center;
+   flex-wrap: wrap;
 }
 
 .get-in {
@@ -141,8 +144,6 @@ div {
 }
 
 .sender {
-   width: 50%;
-
    margin: 20px 0;
 }
 .name-email {
@@ -150,7 +151,7 @@ div {
    align-items: center;
 }
 .name-email input {
-   width: 250px;
+   width: 220px;
    height: 45px;
    border: none;
    border-radius: 0.35em;
@@ -181,4 +182,138 @@ div {
    padding: 0.75em;
    font-size: 1.04rem;
    margin: 20px 10px;
+}
+.others1 {
+   display: flex;
+   flex-direction: column;
+   align-items: center;
+   justify-content: center;
+   font-size: 0.8rem;
+}
+.box {
+   display: flex;
+   align-items: center;
+   font-size: 1.2rem;
+   margin: 18px 0;
+   width: 250px;
+}
+.box p {
+   margin: 0 10px;
+   cursor: pointer;
+}
+.box p:hover {
+   color: var(--color-green);
+}
+.footer {
+   width: 100%;
+   background-image: url(../Images/bg\ -\ Copy.jpg);
+   background-repeat: no-repeat;
+   background-size: cover;
+   font-size: 1.5rem;
+   padding: 60px;
+   display: none;
+}
+.social {
+   width: 100%;
+   height: 50%;
+   display: flex;
+   align-items: center;
+   justify-content: center;
+   margin: 30px 0;
+}
+.social a {
+   color: var(--color-grey);
+   margin: 0 20px;
+   font-size: 2rem;
+   transition: all 0.4s ease;
+}
+.social a:hover {
+   color: var(--color-green);
+}
+.others2 {
+   width: 100%;
+   display: flex;
+   height: 50%;
+   align-items: center;
+   justify-content: space-around;
+   color: var(--color-grey);
+   margin-right: 60px;
+   flex-wrap: wrap;
+}
+.others2 p {
+   font-size: 0.8rem;
+}
+.others2 a {
+   color: var(--color-grey);
+   text-decoration: none;
+}
+.others2 a:hover {
+   color: var(--color-green);
+}
+
+@media screen and (max-width: 1024px) {
+   .others1 {
+      width: 100%;
+   }
+   .box {
+      text-align: center;
+      justify-content: center;
+   }
+}
+@media screen and (max-width: 768px) {
+   .main-section {
+      width: 100%;
+   }
+   .intro {
+      height: 80vh;
+   }
+   .btn-container {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+   }
+   .projects {
+      width: 95%;
+   }
+   .email {
+      width: 95%;
+   }
+   .sender {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+   }
+   .header {
+      display: flex;
+   }
+   .footer {
+      display: flex;
+      flex-direction: column;
+   }
+}
+
+@media screen and (max-width: 650px) {
+   .intro {
+      height: 60vh;
+   }
+}
+
+@media screen and (max-width: 550px) {
+   .intro {
+      height: 60vh;
+   }
+   .name-email {
+      display: flex;
+      width: 100%;
+      flex-direction: column;
+   }
+   .name-email input {
+      width: 95%;
+   }
+   .message {
+      width: 95%;
+   }
 }

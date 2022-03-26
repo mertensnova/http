@@ -61,6 +61,7 @@
    justify-content: space-around;
    color: var(--color-grey);
    margin-right: 60px;
+   flex-wrap: wrap;
 }
 .others p {
    font-size: 0.8rem;
@@ -71,4 +72,10 @@
 }
 .others a:hover {
    color: var(--color-green);
+}
+
+@media screen and (max-width: 768px) {
+   .left-section {
+      display: none;
+   }
 }
