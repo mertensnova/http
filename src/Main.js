@@ -1,6 +1,9 @@
 import React from "react";
-import Avater from "./Images/avatar.jpg";
-import "./styles/Side.css";
+import Email from "./componets/Email.js";
+import { Intro } from "./componets/Intro.js";
+import Projects from "./componets/Projects.js";
+import Avater from "./Images/me1.jpg";
+import "./styles/Main.css";
 
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTwitter } from "@fortawesome/free-brands-svg-icons";
@@ -8,17 +11,20 @@ import { faGithub } from "@fortawesome/free-brands-svg-icons";
 import { faFacebook } from "@fortawesome/free-brands-svg-icons";
 import { faInstagram } from "@fortawesome/free-brands-svg-icons";
 
-const Side = () => {
+const Main = () => {
    return (
-      <section className="left-section">
-         <div className="first-container">
+      <section className="main-section">
+         <div className="header">
             <img src={Avater} alt="Profile" />
             <p>
-               <span>I'm Amr</span> <br /> a Front-End Developer.
+               <span>I'm Amr,</span> a Front-End Developer.
             </p>
          </div>
-         <article className="second-container">
-            <div className="social-media">
+         <Intro />
+         <Projects />
+         <Email />
+         <article className="footer">
+            <div className="social">
                <a href="https://twitter.com/amr_8644">
                   <FontAwesomeIcon icon={faTwitter} />
                </a>
@@ -32,7 +38,7 @@ const Side = () => {
                   <FontAwesomeIcon icon={faInstagram} />
                </a>
             </div>
-            <div className="others">
+            <div className="others2">
                <p>
                   Design: <a href="https://html5up.net/">HTML5</a>
                </p>
@@ -45,4 +51,4 @@ const Side = () => {
    );
 };
 
-export default Side;
+export default Main;

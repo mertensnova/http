@@ -1,55 +1,32 @@
-import React, { useState } from "react";
+import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import { faHome } from "@fortawesome/free-solid-svg-icons";
 import { faPhone } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
 
 const Email = () => {
-   const [sent, setSent] = useState(false);
-   const [name, setName] = useState("");
-   const [email, setEmail] = useState("");
-   const [text, setText] = useState("");
-
-   const handleSubmit = async () => {
-      setSent(true);
-      try {
-         await axios.post("http://localhost:4000/send_mail", {
-            text,
-            name,
-            email,
-         });
-      } catch (error) {
-         console.log(error);
-      }
-   };
-
    return (
       <article className="email">
          <div className="sender">
             <div className="get-in">
                <p>Get In Touch</p>
             </div>
-            <form className="form" onSubmit={handleSubmit}>
+            <form
+               className="form"
+               method="POST"
+               action="https://formspree.io/f/xrgjaekq"
+            >
                <div className="name-email">
-                  <input
-                     type="text"
-                     placeholder="Name"
-                     name="name"
-                     onChange={(e) => setName(e.target.value)}
-                  />
-                  <input
-                     type="email"
-                     placeholder="Email"
-                     name="email"
-                     onChange={(e) => setEmail(e.target.value)}
-                  />
+                  <input type="text" placeholder="Name" name="name" />
+
+                  <input type="email" placeholder="Email" name="email" />
                </div>
-               <textarea
+               <input
+                  type="text"
+                  name="message"
                   placeholder="Message"
                   className="message"
-                  onChange={(e) => setText(e.target.value)}
-               ></textarea>
+               />
 
                <div className="btn-container">
                   <button className="send" type="submit">
