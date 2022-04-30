@@ -2,7 +2,7 @@ import React from "react";
 import NetflixImg from "../Images/Desktop.png";
 import RESTImg from "../Images/color.jpg";
 import SpaceImg from "../Images/space.png";
-import ManageImg from "../Images/manage.jpg";
+import ManageImg from "../Images/Modern.jpg";
 
 const Projects = () => {
    const Netflix = (e) => {
@@ -20,7 +20,7 @@ const Projects = () => {
    };
    const Manage = (e) => {
       e.preventDefault();
-      window.location = "https://zealous-pike-311385.netlify.app/";
+      window.location = "https://modern-website-4xsmr7m8b-amr8644.vercel.app/";
    };
 
    const seeMore = (e) => {
@@ -67,8 +67,8 @@ const Projects = () => {
                   <img src={ManageImg} alt="Manage" onClick={Manage} />
                </div>
 
-               <p className="name">Manage landing page</p>
-               <p className="made">Made using: React JS and TailWind CSS</p>
+               <p className="name">GPT-3 Landing Page</p>
+               <p className="made">Made using: React JS and CSS</p>
             </div>
          </div>
          <div className="btn-container">
