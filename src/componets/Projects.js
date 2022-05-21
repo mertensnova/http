@@ -1,7 +1,7 @@
 import React from "react";
 import NetflixImg from "../Images/Desktop.png";
 import RESTImg from "../Images/color.jpg";
-import SpaceImg from "../Images/space.png";
+import SpaceImg from "../Images/Res.jpg";
 import ManageImg from "../Images/Modern.jpg";
 
 const Projects = () => {
@@ -16,7 +16,7 @@ const Projects = () => {
    };
    const Space = (e) => {
       e.preventDefault();
-      window.location = "https://jolly-turing-08c5a4.netlify.app/";
+      window.location = "https://resturant-website-amr8644.vercel.app/";
    };
    const Manage = (e) => {
       e.preventDefault();
@@ -58,8 +58,8 @@ const Projects = () => {
                   <img src={SpaceImg} alt="Netflix" onClick={Space} />
                </div>
 
-               <p className="name">Space tourism </p>
-               <p className="made">Made using: HTML, CSS, and,JavaScript</p>
+               <p className="name">Modern Resturant Website</p>
+               <p className="made">Made using: Next JS</p>
             </div>
             {/* One Item */}
             <div className="item">
