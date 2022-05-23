@@ -13,11 +13,6 @@ const Side = () => {
       <section className="left-section">
          <div className="first-container">
             <img src={Avater} alt="Profile" />
-            <p>
-               <span>I'm Amr</span> <br /> a Front-End Developer.
-            </p>
-         </div>
-         <article className="second-container">
             <div className="social-media">
                <a href="https://twitter.com/amr_8644">
                   <FontAwesomeIcon icon={faTwitter} />
@@ -32,6 +27,12 @@ const Side = () => {
                   <FontAwesomeIcon icon={faInstagram} />
                </a>
             </div>
+            <p>
+               <span>I'm Amr</span> <br /> a Front-End Developer.
+            </p>
+         </div>
+
+         <article className="second-container">
             <div className="others">
                <p>
                   Design: <a href="https://html5up.net/">HTML5</a>

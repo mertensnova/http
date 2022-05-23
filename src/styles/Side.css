@@ -6,16 +6,14 @@
    align-items: center;
    justify-content: space-evenly;
    flex-direction: column;
-   background-image: url(../Images/bg.jpg);
-   background-repeat: no-repeat;
-   background-size: cover;
-   background-attachment: scroll;
+   background: #001523;
 }
 .first-container {
    width: 80%;
+   height: 90%;
    display: flex;
    align-items: flex-end;
-   justify-content: flex-end;
+   justify-content: center;
    flex-direction: column;
    text-align: right;
 }
@@ -35,15 +33,14 @@
    border-radius: 9999px;
 }
 .second-container {
-   width: 80%;
+   width: 100%;
 }
 .social-media {
    width: 100%;
    display: flex;
    align-items: center;
    justify-content: flex-end;
-   margin: 30px 0;
-   margin-right: 60px;
+   margin: 10px 0;
 }
 .social-media a {
    color: var(--color-grey);
