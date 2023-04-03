@@ -1,7 +1,9 @@
 #include <SDL2/SDL.h>
 #include <iostream>
-#include "include/RenderWindow.hpp"
+#include "RenderWindow.hpp"
 
+const int SCREEN_WIDTH = 640;
+const int SCREEN_HEIGHT = 480;
 
 RenderWindow::RenderWindow(const char* p_title,int p_w,int p_h)
     :window(NULL),renderer(NULL)
@@ -18,4 +20,9 @@ RenderWindow::RenderWindow(const char* p_title,int p_w,int p_h)
 
     renderer = SDL_CreateRenderer(window,-1,NULL);
 
+}
+
+void RenderWindow::clean_up()
+{
+    SDL_DestroyWindow(window);
 }
