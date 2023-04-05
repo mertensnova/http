@@ -11,6 +11,9 @@
 # production
 /build
 
+main
+Game
+
 # misc
 .DS_Store
 .env.local
