@@ -1,23 +1,32 @@
-#include <iostream>
-
-#include "Transactions.h"
-
+#include <cstddef>
 #if !defined(BLOCK_H)
-
 #define BLOCK_H
 
-class Block
-{
-    private:
-    public:
-        std::string prev_hash;
-        Transactions transaction;
-        std::string date;
+#include <cstring>
+#include <ctime>
+#include <iostream>
+#include <openssl/sha.h>
 
-        void hash();
+class Block {
+public:
+  std::string prev_hash;
+  std::string date;
+  std::string hash;
+
+  void hash_set();
 };
 
-Block::hash();
+void Block::hash_set() {
 
+  unsigned char hash[999];
+  unsigned char t;
+  time_t now = time(0);
+  char *dt = ctime(&now);
+  tm *gmtm = gmtime(&now);
+  dt = asctime(gmtm);
+
+  unsigned char test[999] = "Text";
+  SHA512(test, sizeof(test), hash);
+  std::cout << hash << "\n";
+}
 #endif
-
