@@ -1,11 +1,8 @@
 #if !defined(TRANSACTIONS_H)
 #define TRANSACTIONS_H
 
-
-
 #include <iostream>
 #include <openssl/crypto.h>
-
 
 class Transactions 
 {

@@ -1,14 +1,15 @@
-#include <cstddef>
 #if !defined(BLOCK_H)
 #define BLOCK_H
 
 #include <cstring>
 #include <ctime>
 #include <iostream>
-#include <openssl/sha.h>
+
+#include "hash.h"
 
 class Block {
 public:
+  Hash h;
   std::string prev_hash;
   std::string date;
   std::string hash;
@@ -26,7 +27,8 @@ void Block::hash_set() {
   dt = asctime(gmtm);
 
   unsigned char test[999] = "Text";
-  SHA512(test, sizeof(test), hash);
-  std::cout << hash << "\n";
+  h.init_openssl();
+
+  std::cout << h.sha256(dt) << std::endl;
 }
 #endif
