@@ -1,10 +1,9 @@
 #include <arpa/inet.h>
-#include <cctype>
 #include <cerrno>
-#include <cstring>
-#include <execution>
+#include <fstream>
 #include <iostream>
 #include <netdb.h>
+#include <sstream>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -13,7 +12,12 @@
 
 const int BUFFER_SIZE = 30720;
 
-std::vector<std::string> parser(std::string response);
+bool check_word(std::string request, std::string word);
+std::vector<std::string> parse_url(std::string response);
+std::string parse_headers(std::string request);
+std::string read_file(std::string filename);
+bool check_file(std::string filename);
+
 int main(int argc, char **argv) {
 
   int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -41,7 +45,7 @@ int main(int argc, char **argv) {
     return 1;
   }
 
-  int connection_backlog = 5;
+  int connection_backlog = 15;
   if (listen(server_fd, connection_backlog) != 0) {
     return 1;
   }
@@ -51,45 +55,119 @@ int main(int argc, char **argv) {
 
   std::cout << "Waiting for a client to connect...\n";
 
-  ssize_t client_fd = accept(server_fd, (struct sockaddr *)&client_addr,
-                             (socklen_t *)&client_addr_len);
+  while (true) {
+    ssize_t client_fd = accept(server_fd, (struct sockaddr *)&client_addr,
+                               (socklen_t *)&client_addr_len);
 
-  std::cout << "Client connected\n";
+    std::cout << "Client connected\n";
+    char buffer[BUFFER_SIZE] = {0};
+    ssize_t bytesReceived = read(client_fd, buffer, BUFFER_SIZE);
 
-  std::string status_http_OK =
-      "HTTP/1.1 200 OK\r\n\r\nContent-Type: text/plain\r\n\r\nContent-Length: "
-      "3\r\n\r\n\r\n\n";
-  std::string status_http_error = "HTTP/1.1 404 Not Found\r\n\r\n";
+    if (bytesReceived < 0) {
+      std::cerr << "Error reading from socket: " << hstrerror(errno) << "\n";
+    }
 
+    std::string str(buffer);
 
-  char buffer[BUFFER_SIZE] = {0};
+    // send(client_fd, status_http_OK.c_str(), status_http_OK.size(), 0);
+    std::string status_http_error = "HTTP/1.1 404 Not Found\r\n\r\n";
+    std::string status_http_OK = "HTTP/1.1 200 OK\r\nContent-Type: "
+                                 "application/octet-stream\r\nContent-Length: ";
 
-  ssize_t bytesReceived = read(client_fd, buffer, BUFFER_SIZE);
+    auto res = parse_url(str);
 
-  if (bytesReceived < 0) {
-    std::cerr << "Error reading from socket: " << hstrerror(errno) << "\n";
+    if (res.size() < 2) {
+      std::string OK = "HTTP/1.1 200 OK\r\nContent-Type: "
+                       "text/plain\r\n\r\n";
+      send(client_fd, OK.c_str(), OK.size(), 0);
+      close(client_fd);
+      continue;
+    }
+
+    if (res[0].find("files") != std::string::npos) {
+      if (!check_file(res[1])) {
+        send(client_fd, status_http_error.c_str(), status_http_error.size(), 0);
+        close(client_fd);
+        continue;
+      } else {
+        std::cout << res[1];
+        std::string ff = read_file(res[1]);
+        std::string siz = std::to_string(ff.size());
+        status_http_OK += siz;
+        status_http_OK += "\r\n\r\n";
+        status_http_OK += ff;
+        send(client_fd, status_http_OK.c_str(), status_http_OK.size(), 0);
+        close(client_fd);
+        continue;
+      };
+    }
+
+    if (check_word(str, "User-Agent")) {
+      auto res = parse_headers(str);
+      std::string OK =
+          "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
+      std::string siz = std::to_string(res.size() - 1);
+      OK += siz;
+      OK += "\r\n\r\n";
+      OK += res;
+      send(client_fd, OK.c_str(), OK.size(), 0);
+      close(client_fd);
+      continue;
+    } else {
+      if (check_word(str, "/echo")) {
+        auto res = parse_url(str);
+        std::string OK =
+            "HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: ";
+        std::string siz = std::to_string(res[1].size());
+        OK += siz;
+        OK += "\r\n\r\n";
+        OK += res[1];
+        send(client_fd, OK.c_str(), OK.size(), 0);
+
+        close(client_fd);
+        continue;
+      } else {
+        send(client_fd, status_http_error.c_str(), status_http_error.size(), 0);
+        close(client_fd);
+        continue;
+      };
+    }
+    close(client_fd);
   }
-
-  std::string str(buffer);
-  auto s = parser(str);
-
-  std::cout << s[0] << std::endl;
-  if (std::strcmp(s[0].c_str(), " ")) {
-    send(client_fd, status_http_OK.c_str(), status_http_OK.size(), 0);
-    return 0;
-  }
-  if (std::strcmp(s[0].c_str(), "echo") == 0) {
-    status_http_OK += s[s.size() - 2];
-    send(client_fd, status_http_OK.c_str(), status_http_OK.size(), 0);
-    return 0;
-  }
-
   close(server_fd);
-  close(client_fd);
+
   return 0;
 }
 
-std::vector<std::string> parser(std::string response) {
+bool check_file(std::string filename) {
+
+  std::string dir = "/tmp/data/codecrafters.io/http-server-tester/";
+  dir += filename;
+  std::ifstream nfp;
+  nfp.open(dir);
+  if (!nfp.is_open()) {
+    return false;
+  }
+  return true;
+};
+
+std::string read_file(std::string filename) {
+
+  std::string dir = "/tmp/data/codecrafters.io/http-server-tester/";
+  std::string dirs = "/home/mertens/Desktop/Projects/cc/tmp/files/";
+  dir += filename;
+  std::ifstream nfp;
+  std::string str;
+
+  nfp.open(dir);
+  std::ostringstream ss;
+  ss << nfp.rdbuf();
+  std::string fileContent = ss.str();
+
+  return fileContent;
+}
+
+std::vector<std::string> parse_url(std::string response) {
   std::vector<std::string> r;
   for (int i = 0; i < response.size(); ++i) {
 
@@ -97,9 +175,12 @@ std::vector<std::string> parser(std::string response) {
       break;
 
     if (response[i] == '/') {
+      if (response[i + 1] == ' ') {
+        break;
+      }
       int p = i + 1;
       std::string str = {};
-      while (response[p] != '/' && response[p] != '\r' && response[p] != ' ') {
+      while (response[p] != '\r' && response[p] != ' ') {
         str.push_back(response[p]);
         p++;
       }
@@ -107,9 +188,33 @@ std::vector<std::string> parser(std::string response) {
     }
   }
 
-  for (auto x : r) {
-      std::cout << x << std::endl;
+  return r;
+};
+
+bool check_word(std::string request, std::string word) {
+  size_t spos = request.find(word);
+  if (spos == std::string::npos)
+    return false;
+
+  return true;
+};
+
+std::string parse_headers(std::string request) {
+
+  std::string user_agent = "";
+  size_t spos = request.find("User-Agent");
+
+  if (spos == std::string::npos) {
+    std::cerr << "[!]Not Found" << std::endl;
   }
 
-  return r;
+  for (size_t i = spos + 12; i < request.size(); i++) {
+    if (request[i] != '\n') {
+      user_agent += request[i];
+    } else {
+      break;
+    }
+  }
+
+  return user_agent;
 };
