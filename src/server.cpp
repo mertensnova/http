@@ -12,11 +12,14 @@
 
 const int BUFFER_SIZE = 30720;
 
+std::string parse_request_body(std::string request);
 bool check_word(std::string request, std::string word);
 std::vector<std::string> parse_url(std::string response);
 std::string parse_headers(std::string request);
 std::string read_file(std::string filename);
 bool check_file(std::string filename);
+std::string check_method(std::string request);
+bool write_file(std::string filename, std::string content);
 
 int main(int argc, char **argv) {
 
@@ -69,12 +72,24 @@ int main(int argc, char **argv) {
 
     std::string str(buffer);
 
+    std::string nnf = parse_request_body(str);
+    std::string method = check_method(str);
+
     // send(client_fd, status_http_OK.c_str(), status_http_OK.size(), 0);
     std::string status_http_error = "HTTP/1.1 404 Not Found\r\n\r\n";
     std::string status_http_OK = "HTTP/1.1 200 OK\r\nContent-Type: "
                                  "application/octet-stream\r\nContent-Length: ";
 
     auto res = parse_url(str);
+
+    if (method == "POST") {
+      std::string status_http_created = "HTTP/1.1 201 Created\r\n\r\n";
+      write_file(res[1], nnf);
+      send(client_fd, status_http_created.c_str(), status_http_created.size(),
+           0);
+      close(client_fd);
+      continue;
+    }
 
     if (res.size() < 2) {
       std::string OK = "HTTP/1.1 200 OK\r\nContent-Type: "
@@ -139,6 +154,37 @@ int main(int argc, char **argv) {
   return 0;
 }
 
+std::string check_method(std::string request) {
+
+  std::string method = "";
+
+  for (size_t i = 0; i < request.size(); i++) {
+    if (request[i] == ' ') {
+      continue;
+    }
+    if (request[i] != '/') {
+      method += request[i];
+    } else {
+      break;
+    }
+  }
+  return method;
+};
+
+bool write_file(std::string filename, std::string content) {
+
+  std::string dir = "/tmp/data/codecrafters.io/http-server-tester/";
+  dir += filename;
+  std::ofstream fp;
+
+  fp.open(dir, std::ios_base::app);
+  if (!fp.is_open()) {
+    return false;
+  }
+  fp << content;
+  fp.close();
+  return true;
+};
 bool check_file(std::string filename) {
 
   std::string dir = "/tmp/data/codecrafters.io/http-server-tester/";
@@ -197,6 +243,24 @@ bool check_word(std::string request, std::string word) {
     return false;
 
   return true;
+};
+
+std::string parse_request_body(std::string request) {
+
+  std::string body = "";
+  size_t spos = request.find("\r\n\r\n");
+
+  if (spos == std::string::npos) {
+    std::cerr << "[!]Not Found" << std::endl;
+  }
+
+  for (size_t i = spos; i < request.size(); i++) {
+    if (request[i] == '\n' || request[i] == '\r') {
+      continue;
+    }
+    body += request[i];
+  }
+  return body;
 };
 
 std::string parse_headers(std::string request) {
