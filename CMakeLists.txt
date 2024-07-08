@@ -1,7 +1,13 @@
-cmake_minimum_required(VERSION 3.13)
-project(http-server-starter-cpp)
-set(CMAKE_CXX_STANDARD 20) # Enable the C++20 standard
+project(http)
 
-set(SOURCE_FILES src/server.cpp)
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
-add_executable(server ${SOURCE_FILES})
+include_directories(${PROJECT_SOURCE_DIR}/includes)
+
+set(SOURCES
+    src/server.cpp
+)
+
+add_executable(http ${SOURCES})
+cmake_minimum_required(VERSION 3.10)
