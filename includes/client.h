@@ -16,7 +16,6 @@ const int BUFFER_SIZE = 30720;
 struct SClient {
   int client_fd;
   std::string buffer;
-
 };
 
 class ClientHandler {

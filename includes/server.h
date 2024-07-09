@@ -14,6 +14,7 @@ class Server {
 public:
   inline int server_create(int port, int connection_backlog);
 
+
 private:
 };
 
@@ -50,5 +51,6 @@ int Server::server_create(int port, int connection_backlog) {
 
   return server_fd;
 };
+
 
 #endif
