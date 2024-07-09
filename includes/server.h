@@ -9,15 +9,21 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <unordered_map>
 
 class Server {
 public:
   inline int server_create(int port, int connection_backlog);
-
+  inline void GET(std::string url, std::string filename);
 
 private:
+  std::unordered_map<std::string, std::string> routes;
 };
 
+void Server::GET(std::string url, std::string filename) {
+  routes[url] = filename;
+  return;
+};
 int Server::server_create(int port, int connection_backlog) {
 
   int server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -51,6 +57,5 @@ int Server::server_create(int port, int connection_backlog) {
 
   return server_fd;
 };
-
 
 #endif

@@ -6,8 +6,14 @@
 #include <unistd.h>
 #include <vector>
 
-class ResponseHandler {
+struct HTTPHeader{
+    int status;
+    std::string content_type;
+    std::string content_length;
+    std::string user_agent;
+};
 
+class ResponseHandler {
 public:
   inline void response_send(int client_fd, int status, std::string message);
 };

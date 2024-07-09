@@ -8,12 +8,10 @@
 #include "../includes/client.h"
 #include "../includes/server.h"
 #include "../includes/request.h"
-#include "../includes/routes.h"
 
 int main(int argc, char **argv) {
 
   Server server;
-  RoutesHandler route;
   ClientHandler client;
   RequestHandler request;
 
@@ -22,11 +20,9 @@ int main(int argc, char **argv) {
 
   std::cout << cc.buffer << std::endl;
 
-  if (request.request_check_method(cc.buffer,"GET")) {
-      auto route = request.request_parse_url(cc.buffer);
-  }
-
-  route.GET("/index", "index.html");
+  server.GET("/index", "index.html");
+  server.GET("/home", "home.html");
+  server.GET("/about", "about.html");
 
   close(cc.client_fd);
   close(server_fd);
