@@ -6,22 +6,22 @@
 #include <unistd.h>
 #include <vector>
 
-struct HTTPHeader{
-    int status;
-    std::string content_type;
-    std::string content_length;
-    std::string user_agent;
+struct HTTPHeader {
+  int status;
+  std::string content_type;
+  std::string content_length;
+  std::string user_agent;
+  std::string body;
 };
 
 class ResponseHandler {
 public:
-  inline void response_send(int client_fd, int status, std::string message);
+  inline void response_send(int client_fd, HTTPHeader response);
 };
 
-void ResponseHandler::response_send(int client_fd, int status,
-                                    std::string message) {
-  send(client_fd, message.c_str(), message.size(), 0);
-  close(client_fd);
+void ResponseHandler::response_send(int client_fd, HTTPHeader response) {
+  // send(client_fd, message.c_str(), message.size(), 0);
+  // close(client_fd);
   return;
 };
 

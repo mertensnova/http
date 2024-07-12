@@ -8,12 +8,11 @@ class RequestHandler {
 
 public:
   inline std::vector<std::string> request_parse_url(std::string request);
-  inline bool request_check_method(std::string request, std::string method);
+  inline std::string request_check_method(std::string request);
 };
 
-bool RequestHandler::request_check_method(std::string request,
-                                          std::string method) {
-  std::string m = "";
+std::string RequestHandler::request_check_method(std::string request) {
+  std::string method = "";
   for (size_t i = 0; i < request.size(); i++) {
     if (request[i] == ' ')
       continue;
@@ -23,7 +22,7 @@ bool RequestHandler::request_check_method(std::string request,
       break;
   };
 
-  return m == method;
+  return method;
 };
 
 std::vector<std::string>

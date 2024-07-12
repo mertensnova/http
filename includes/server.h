@@ -11,13 +11,21 @@
 #include <unistd.h>
 #include <unordered_map>
 
+#include "./request.h"
+
+const int BUFFER_SIZE = 30720;
+extern std::unordered_map<std::string, std::string> routes;
+struct SClient {
+  int client_fd;
+  std::string buffer;
+};
+
 class Server {
 public:
-  inline int server_create(int port, int connection_backlog);
-  inline void GET(std::string url, std::string filename);
-
-private:
   std::unordered_map<std::string, std::string> routes;
+  inline int server_create(int port, int connection_backlog);
+  inline SClient *server_handle_client(int server_fd);
+  inline void GET(std::string url, std::string filename);
 };
 
 void Server::GET(std::string url, std::string filename) {
@@ -55,7 +63,52 @@ int Server::server_create(int port, int connection_backlog) {
     return -1;
   }
 
+  SClient *client = new (std::nothrow) SClient();
+  RequestHandler request;
+
+  if (!client) {
+    std::perror("Failed to allocate memory");
+    std::exit(EXIT_FAILURE);
+  };
+
+  client = server_handle_client(server_fd);
+  std::string method = request.request_check_method(client->buffer);
+  auto path = request.request_parse_url(client->buffer);
+
+  std::cout << method << std::endl;
+  std::cout << path[0] << std::endl;
+
+  
+
   return server_fd;
+};
+
+SClient *Server::server_handle_client(int server_fd) {
+
+  SClient *client_new = new (std::nothrow) SClient();
+
+  struct sockaddr_in client_addr;
+  int client_addr_len = sizeof(client_addr);
+
+  std::cout << "Waiting for a client to connect...\n";
+
+  ssize_t client_fd = accept(server_fd, (struct sockaddr *)&client_addr,
+                             (socklen_t *)&client_addr_len);
+
+  std::cout << "Client connected\n";
+
+  char buffer[BUFFER_SIZE] = {0};
+  ssize_t bytesReceived = read(client_fd, buffer, BUFFER_SIZE);
+
+  if (bytesReceived < 0) {
+    std::cerr << "Error reading from socket: " << hstrerror(errno) << "\n";
+  };
+
+  std::string str(buffer);
+
+  client_new->client_fd = client_fd;
+  client_new->buffer = str;
+  return client_new;
 };
 
 #endif
