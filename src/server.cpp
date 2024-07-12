@@ -4,8 +4,8 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#include "../includes/server.h"
 #include "../includes/request.h"
+#include "../includes/server.h"
 
 int main(int argc, char **argv) {
 
@@ -13,11 +13,10 @@ int main(int argc, char **argv) {
 
   RequestHandler request;
   int server_fd = server.server_create(8000, 14);
- 
-    server.GET("/index", "index.html");
+
+  server.GET("/index", "index.html");
   server.GET("/home", "home.html");
   server.GET("/about", "about.html");
-
 
   close(server_fd);
 

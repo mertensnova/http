@@ -5,6 +5,7 @@
 #include <cerrno>
 #include <iostream>
 #include <netdb.h>
+#include <new>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
@@ -12,6 +13,8 @@
 #include <unordered_map>
 
 #include "./request.h"
+#include "./response.h"
+#include "./status.h"
 
 const int BUFFER_SIZE = 30720;
 extern std::unordered_map<std::string, std::string> routes;
@@ -64,7 +67,10 @@ int Server::server_create(int port, int connection_backlog) {
   }
 
   SClient *client = new (std::nothrow) SClient();
+
   RequestHandler request;
+
+  ResponseHandler response;
 
   if (!client) {
     std::perror("Failed to allocate memory");
@@ -78,7 +84,24 @@ int Server::server_create(int port, int connection_backlog) {
   std::cout << method << std::endl;
   std::cout << path[0] << std::endl;
 
+  for (auto x : routes) {
   
+  std::cout << x.first << std::endl;
+  }
+  if (routes[path[0]] == "") {
+    std::string ss =
+        response.response_handle_header(NOT_FOUND, "text/plain", "Not Found");
+
+    response.response_send(client->client_fd, ss);
+    close(client->client_fd);
+  } else {
+      std::string body = response.response_read_file(path[0]);
+    std::string ss =
+        response.response_handle_header(OK, "text/html", body);
+
+    response.response_send(client->client_fd, ss);
+    close(client->client_fd);
+  };
 
   return server_fd;
 };
