@@ -85,8 +85,7 @@ int Server::server_create(int port, int connection_backlog) {
   std::cout << path[0] << std::endl;
 
   for (auto x : routes) {
-  
-  std::cout << x.first << std::endl;
+    std::cout << x.first << std::endl;
   }
   if (routes[path[0]] == "") {
     std::string ss =
@@ -95,9 +94,8 @@ int Server::server_create(int port, int connection_backlog) {
     response.response_send(client->client_fd, ss);
     close(client->client_fd);
   } else {
-      std::string body = response.response_read_file(path[0]);
-    std::string ss =
-        response.response_handle_header(OK, "text/html", body);
+    std::string body = response.response_read_file(path[0]);
+    std::string ss = response.response_handle_header(OK, "text/html", body);
 
     response.response_send(client->client_fd, ss);
     close(client->client_fd);
