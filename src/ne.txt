@@ -1,86 +1,34 @@
-#include <arpa/inet.h>
-#include <cerrno>
-#include <fstream>
-#include <iostream>
-#include <netdb.h>
-#include <sstream>
-#include <string>
-#include <sys/socket.h>
-#include <sys/types.h>
-#include <unistd.h>
-#include <vector>
 
-const int BUFFER_SIZE = 30720;
-
-std::string parse_request_body(std::string request);
-bool check_word(std::string request, std::string word);
-std::vector<std::string> parse_url(std::string response);
-std::string parse_headers(std::string request);
-std::string read_file(std::string filename);
-bool check_file(std::string filename);
-std::string check_method(std::string request);
-bool write_file(std::string filename, std::string content);
-
-int main(int argc, char **argv) {
-
-  int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-
-  if (server_fd < 0) {
-    std::cerr << "Failed to create server socket\n";
-    return 1;
+  std::string method = request.request_check_method(client->buffer);
+  auto path = request.request_parse_url(client->buffer);
+  std::cout << method << std::endl;
+  // std::cout << path[0] << std::endl;
+  if (routes.size() == 0) {
+    std::cout << "No routes"
+              << "\n";
+    return -1;
+  };
+  for (auto x : routes) {
+    std::cout << x.first << std::endl;
   }
 
-  int reuse = 1;
-  if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) <
-      0) {
-    std::cerr << "setsockopt failed\n";
-    return 1;
-  }
+  if (routes[path[0]] == "") {
+    std::string ss =
+        response.response_handle_header(NOT_FOUND, "text/plain", "Not Found");
 
-  struct sockaddr_in server_addr;
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr = INADDR_ANY;
-  server_addr.sin_port = htons(4221);
+    response.response_send(client->client_fd, ss);
+    close(client->client_fd);
+  } else {
 
-  if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) !=
-      0) {
-    std::cerr << "Failed to bind to port 4221\n";
-    return 1;
-  }
+    std::string body = response.response_read_file(path[0]);
+    std::string ss = response.response_handle_header(OK, "text/html", body);
 
-  int connection_backlog = 15;
-  if (listen(server_fd, connection_backlog) != 0) {
-    return 1;
-  }
+    response.response_send(client->client_fd, ss);
+  };
 
-  struct sockaddr_in client_addr;
-  int client_addr_len = sizeof(client_addr);
 
-  std::cout << "Waiting for a client to connect...\n";
 
-  while (true) {
-    ssize_t client_fd = accept(server_fd, (struct sockaddr *)&client_addr,
-                               (socklen_t *)&client_addr_len);
 
-    std::cout << "Client connected\n";
-    char buffer[BUFFER_SIZE] = {0};
-    ssize_t bytesReceived = read(client_fd, buffer, BUFFER_SIZE);
-
-    if (bytesReceived < 0) {
-      std::cerr << "Error reading from socket: " << hstrerror(errno) << "\n";
-    }
-
-    std::string str(buffer);
-
-    std::string nnf = parse_request_body(str);
-    std::string method = check_method(str);
-
-    // send(client_fd, status_http_OK.c_str(), status_http_OK.size(), 0);
-    std::string status_http_error = "HTTP/1.1 404 Not Found\r\n\r\n";
-    std::string status_http_OK = "HTTP/1.1 200 OK\r\nContent-Type: "
-                                 "application/octet-stream\r\nContent-Length: ";
-
-    auto res = parse_url(str);
 
     if (method == "POST") {
       std::string status_http_created = "HTTP/1.1 201 Created\r\n\r\n";

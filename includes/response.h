@@ -19,6 +19,7 @@ struct HTTPHeader {
 
 class ResponseHandler {
 public:
+  inline void handle_file_ext(std::string filename);
   inline void response_send(int client_fd, std::string message);
   inline std::string response_read_file(std::string filename);
   inline std::string response_handle_header(int status,
@@ -55,7 +56,7 @@ std::string ResponseHandler::response_make_message(HTTPHeader response) {
 };
 std::string ResponseHandler::response_read_file(std::string filename) {
 
-  std::string dir = "/home/mertens/Desktop/Projects/http/static";
+  std::string dir = "/home/mertens/Desktop/Projects/http/statics/";
   dir += filename;
   std::ifstream nfp;
   std::string str;
@@ -67,5 +68,8 @@ std::string ResponseHandler::response_read_file(std::string filename) {
 
   return fileContent;
 };
+
+
+  void ResponseHandler::handle_file_ext(std::string filename){};
 
 #endif

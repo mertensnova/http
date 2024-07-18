@@ -12,13 +12,12 @@ int main(int argc, char **argv) {
   Server server;
 
   RequestHandler request;
-  int server_fd = server.server_create(8000, 14);
 
   server.GET("/index", "index.html");
   server.GET("/home", "home.html");
   server.GET("/about", "about.html");
 
-  close(server_fd);
 
+  close(server.server_create(8000, 14));
   return 0;
 };
