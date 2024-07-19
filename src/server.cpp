@@ -3,7 +3,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-
 #include "../includes/request.h"
 #include "../includes/server.h"
 
@@ -11,7 +10,8 @@ int main(int argc, char **argv) {
 
   Server server;
 
-  RequestHandler request;
+  Request request;
+
 
   server.GET("/index", "index.html");
   server.GET("/home", "home.html");

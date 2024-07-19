@@ -11,6 +11,7 @@ in
     pkgs.pkg-config
     pkgs.meson
     pkgs.ninja
+    pkgs.nlohmann_json
 
     # Add some libraries
     pkgs.boost

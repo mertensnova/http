@@ -9,44 +9,38 @@
 #include <unistd.h>
 #include <vector>
 
-struct HTTPHeader {
+struct ResponseHeader{
   int status;
   std::string content_type;
   int content_length;
-  std::string user_agent;
-  std::string body;
+  std::string message;
 };
 
-class ResponseHandler {
+class ResponseWritter {
 public:
   inline void handle_file_ext(std::string filename);
   inline void response_send(int client_fd, std::string message);
   inline std::string response_read_file(std::string filename);
-  inline std::string response_handle_header(int status,
-                                            std::string content_type,
-                                            std::string body);
+  inline std::string response_write(int status, std::string body);
 
-  inline std::string response_make_message(HTTPHeader response);
+ // inline std::string response_make_message(HTTPHeader response);
 };
 
-void ResponseHandler::response_send(int client_fd, std::string message) {
+void ResponseWritter::response_send(int client_fd, std::string message) {
   send(client_fd, message.c_str(), message.size(), 0);
   close(client_fd);
   return;
 };
-std::string ResponseHandler::response_handle_header(int status,
-                                                    std::string content_type,
-                                                    std::string body) {
-
-  HTTPHeader *http = new (std::nothrow) HTTPHeader;
+std::string ResponseWritter::response_write(int status, std::string message) {
+  ResponseHeader *http = new (std::nothrow) ResponseHeader;
   http->status = status;
-  http->content_type = content_type;
-  http->content_length = body.size();
-  http->body = body;
-  return response_make_message(*http);
-};
+  http->message = message;
 
-std::string ResponseHandler::response_make_message(HTTPHeader response) {
+ // return response_make_message(*http);
+ return "";
+};
+/*
+std::string ResponseWritter::response_make_message(HTTPHeader response) {
   std::string message = "HTTP/1.1";
   message += std::to_string(response.status);
   message += "\r\nContent-Type: " + response.content_type;
@@ -54,7 +48,8 @@ std::string ResponseHandler::response_make_message(HTTPHeader response) {
   message += "\r\n\r\n" + response.body;
   return message;
 };
-std::string ResponseHandler::response_read_file(std::string filename) {
+*/
+std::string ResponseWritter::response_read_file(std::string filename) {
 
   std::string dir = "/home/mertens/Desktop/Projects/http/statics/";
   dir += filename;
@@ -69,7 +64,6 @@ std::string ResponseHandler::response_read_file(std::string filename) {
   return fileContent;
 };
 
-
-  void ResponseHandler::handle_file_ext(std::string filename){};
+void ResponseWritter::handle_file_ext(std::string filename){};
 
 #endif

@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <unordered_map>
+//#include <nlohmann/json.hpp>
 
 #include "./request.h"
 #include "./response.h"
@@ -67,22 +68,20 @@ int Server::server_create(int port, int connection_backlog) {
   }
 
   SClient *client = new (std::nothrow) SClient();
-  RequestHandler request;
-  ResponseHandler response;
 
   if (!client) {
     std::perror("Failed to allocate memory");
     std::exit(EXIT_FAILURE);
   };
 
+  Request request;
+  ResponseWritter response;
+
   client = server_handle_client(server_fd);
 
   std::string method = request.request_check_method(client->buffer);
   auto path = request.request_parse_url(client->buffer);
-  std::cout << method << std::endl;
-  std::cout << path[0] << std::endl;
- 
-
+/*
   if (routes["/" + path[0]] == "") {
     std::string ss =
         response.response_handle_header(NOT_FOUND, "text/plain", "Not Found");
@@ -91,11 +90,12 @@ int Server::server_create(int port, int connection_backlog) {
     close(client->client_fd);
   } else {
 
-    std::string body = response.response_read_file(path[0]+".html");
+    std::string body = response.response_read_file(path[0] + ".html");
     std::string ss = response.response_handle_header(OK, "text/html", body);
 
     response.response_send(client->client_fd, ss);
   };
+  */
 
   close(client->client_fd);
   return server_fd;

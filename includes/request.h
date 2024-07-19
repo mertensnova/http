@@ -4,14 +4,14 @@
 #include <iostream>
 #include <vector>
 
-class RequestHandler {
+class Request {
 
 public:
   inline std::vector<std::string> request_parse_url(std::string request);
   inline std::string request_check_method(std::string request);
 };
 
-std::string RequestHandler::request_check_method(std::string request) {
+std::string Request::request_check_method(std::string request) {
   std::string method = "";
   for (size_t i = 0; i < request.size(); i++) {
     if (request[i] == ' ')
@@ -25,8 +25,7 @@ std::string RequestHandler::request_check_method(std::string request) {
   return method;
 };
 
-std::vector<std::string>
-RequestHandler::request_parse_url(std::string request) {
+std::vector<std::string> Request::request_parse_url(std::string request) {
   std::vector<std::string> r;
   for (int i = 0; i < request.size(); ++i) {
     if (request[i] == '\r')
