@@ -3,6 +3,7 @@
 
 #include <arpa/inet.h>
 #include <cerrno>
+#include <functional>
 #include <iostream>
 #include <netdb.h>
 #include <new>
@@ -11,7 +12,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <unordered_map>
-//#include <nlohmann/json.hpp>
+// #include <nlohmann/json.hpp>
 
 #include "./request.h"
 #include "./response.h"
@@ -26,17 +27,45 @@ struct SClient {
 
 class Server {
 public:
+  SClient *client = new (std::nothrow) SClient();
   std::unordered_map<std::string, std::string> routes;
   inline int server_create(int port, int connection_backlog);
+  inline void server_serve_static(std::string filename);
   inline SClient *server_handle_client(int server_fd);
-  inline void GET(std::string url, std::string filename);
+  inline void GET(std::string url, std::string filename,
+                  std::function<void()> func);
 };
 
-void Server::GET(std::string url, std::string filename) {
+void Server::GET(std::string url, std::string filename,
+                 std::function<void()> func) {
   routes[url] = filename;
+  func();
   return;
 };
+
+void Server::server_serve_static(std::string filename) {
+  Request request;
+  ResponseWritter response;
+
+  // auto path = request.request_parse_url(client->buffer);
+
+  /*
+  if (routes["/" + path[0]] == "") {
+    response.response_send(client->client_fd, "Not Found");
+    close(client->client_fd);
+  } else {
+   };
+ */
+  std::string body = response.response_read_file(filename);
+  std::cout << body << std::endl;
+  response.response_send(client->client_fd, body);
+};
 int Server::server_create(int port, int connection_backlog) {
+
+  if (!client) {
+    std::perror("Failed to allocate memory");
+    std::exit(EXIT_FAILURE);
+  };
 
   int server_fd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -67,35 +96,8 @@ int Server::server_create(int port, int connection_backlog) {
     return -1;
   }
 
-  SClient *client = new (std::nothrow) SClient();
-
-  if (!client) {
-    std::perror("Failed to allocate memory");
-    std::exit(EXIT_FAILURE);
-  };
-
-  Request request;
-  ResponseWritter response;
-
   client = server_handle_client(server_fd);
-
-  std::string method = request.request_check_method(client->buffer);
-  auto path = request.request_parse_url(client->buffer);
-/*
-  if (routes["/" + path[0]] == "") {
-    std::string ss =
-        response.response_handle_header(NOT_FOUND, "text/plain", "Not Found");
-
-    response.response_send(client->client_fd, ss);
-    close(client->client_fd);
-  } else {
-
-    std::string body = response.response_read_file(path[0] + ".html");
-    std::string ss = response.response_handle_header(OK, "text/html", body);
-
-    response.response_send(client->client_fd, ss);
-  };
-  */
+  server_serve_static("index.html");
 
   close(client->client_fd);
   return server_fd;

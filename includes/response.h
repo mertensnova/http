@@ -27,18 +27,27 @@ public:
 };
 
 void ResponseWritter::response_send(int client_fd, std::string message) {
-  send(client_fd, message.c_str(), message.size(), 0);
+  std::string message1 = "HTTP/1.1";
+  message += std::to_string(200);
+  message += "\r\nContent-Type: text/html";
+  message += "\r\nContent-Length: " + std::to_string(message.size());
+  message += "\r\n\r\n" + message;
+  send(client_fd, message1.c_str(), message1.size(), 0);
   close(client_fd);
   return;
 };
+
 std::string ResponseWritter::response_write(int status, std::string message) {
   ResponseHeader *http = new (std::nothrow) ResponseHeader;
   http->status = status;
+  http->content_type = "text/html";
   http->message = message;
+  http->content_length = message.size();
 
  // return response_make_message(*http);
  return "";
 };
+
 /*
 std::string ResponseWritter::response_make_message(HTTPHeader response) {
   std::string message = "HTTP/1.1";
@@ -49,6 +58,7 @@ std::string ResponseWritter::response_make_message(HTTPHeader response) {
   return message;
 };
 */
+
 std::string ResponseWritter::response_read_file(std::string filename) {
 
   std::string dir = "/home/mertens/Desktop/Projects/http/statics/";
