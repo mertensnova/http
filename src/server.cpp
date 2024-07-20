@@ -12,8 +12,11 @@ int main(int argc, char **argv) {
 
   Request request;
 
-  server.GET("/index", "index.html",
-             [&]() { server.server_serve_static("index.html"); });
+  server.GET("/index", [&]() {
+          server.server_serve_static("index.html");
+
+  });
+  server.GET("/home", [&]() { server.server_serve_static("index.html"); });
 
   // server.GET("/home", "home.html");
   // server.GET("/about", "about.html");

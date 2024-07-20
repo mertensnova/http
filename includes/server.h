@@ -17,6 +17,7 @@
 #include "./request.h"
 #include "./response.h"
 #include "./status.h"
+#include "utils.h"
 
 const int BUFFER_SIZE = 30720;
 
@@ -32,34 +33,22 @@ public:
   inline int server_create(int port, int connection_backlog);
   inline void server_serve_static(std::string filename);
   inline SClient *server_handle_client(int server_fd);
-  inline void GET(std::string url, std::string filename,
-                  std::function<void()> func);
+  inline void GET(std::string url, std::function<void()> func);
 };
 
-void Server::GET(std::string url, std::string filename,
-                 std::function<void()> func) {
-  routes[url] = filename;
+void Server::GET(std::string url, std::function<void()> func) {
   func();
   return;
 };
 
 void Server::server_serve_static(std::string filename) {
-  Request request;
+  Utils u;
   ResponseWritter response;
 
-  // auto path = request.request_parse_url(client->buffer);
-
-  /*
-  if (routes["/" + path[0]] == "") {
-    response.response_send(client->client_fd, "Not Found");
-    close(client->client_fd);
-  } else {
-   };
- */
-  std::string body = response.response_read_file(filename);
-  std::cout << body << std::endl;
-  response.response_send(client->client_fd, body);
+  std::string body = u.read_file(filename);
+  response.response_send(client->client_fd, HTTP_OK, body);
 };
+
 int Server::server_create(int port, int connection_backlog) {
 
   if (!client) {
