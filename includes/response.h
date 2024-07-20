@@ -15,6 +15,7 @@ struct ResponseHeader {
   std::string content_type;
   int content_length;
   std::string message;
+  std::string body;
   // Default constructor (if needed)
   ResponseHeader()
       : status(200), message("OK"), content_type("text/html"),
@@ -26,15 +27,15 @@ public:
   inline void handle_file_ext(std::string filename);
   inline void response_send(int client_fd, int status, std::string message);
   inline std::string response_write(int status, std::string body);
+  inline void response_send(ResponseHeader *res, int client_fd);
 };
 
-void ResponseWritter::response_send(int client_fd, int status,
-                                    std::string message) {
+void ResponseWritter::response_send(ResponseHeader *res, int client_fd) {
   std::string response = "HTTP/1.1";
-  response += std::to_string(status);
-  response += "\r\nContent-Type: text/html";
-  response += "\r\nContent-Length: " + std::to_string(message.size());
-  response += "\r\n\r\n" + message;
+  response += std::to_string(res->status);
+  response += "\r\nContent-Type: " + res->content_type;
+  response += "\r\nContent-Length: " + std::to_string(res->content_length);
+  response += "\r\n\r\n" + res->body;
   send(client_fd, response.c_str(), response.size(), 0);
   close(client_fd);
   return;

@@ -31,22 +31,23 @@ public:
   SClient *client = new (std::nothrow) SClient();
   std::unordered_map<std::string, std::string> routes;
   inline int server_create(int port, int connection_backlog);
-  inline void server_serve_static(std::string filename);
+
+  inline void server_serve_static(ResponseHeader res, std::string filename);
   inline SClient *server_handle_client(int server_fd);
-  inline void GET(std::string url, std::function<void()> func);
+  inline void GET(std::string url, std::function<void(ResponseHeader)> func);
 };
 
-void Server::GET(std::string url, std::function<void()> func) {
-  func();
+void Server::GET(std::string url, std::function<void(ResponseHeader)> func) {
+  func(ResponseHeader());
   return;
 };
 
-void Server::server_serve_static(std::string filename) {
+void Server::server_serve_static(ResponseHeader res, std::string filename) {
   Utils u;
   ResponseWritter response;
 
   std::string body = u.read_file(filename);
-  response.response_send(client->client_fd, HTTP_OK, body);
+   response.response_send(client->client_fd, HTTP_OK, body);
 };
 
 int Server::server_create(int port, int connection_backlog) {

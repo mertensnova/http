@@ -12,11 +12,14 @@ int main(int argc, char **argv) {
 
   Request request;
 
-  server.GET("/index", [&]() {
-          server.server_serve_static("index.html");
-
-  });
-  server.GET("/home", [&]() { server.server_serve_static("index.html"); });
+     // Example GET route
+    server.GET("/index", [&](ResponseHeader response) {
+        response.status = HTTP_OK;
+        response.message = "OK";
+        response.content_type = "text/html";
+        server.server_serve_static("index.html");
+    });
+ // server.GET("/home", [&]() { server.server_serve_static("index.html"); });
 
   // server.GET("/home", "home.html");
   // server.GET("/about", "about.html");
