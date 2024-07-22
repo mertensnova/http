@@ -32,22 +32,14 @@ public:
   std::unordered_map<std::string, std::string> routes;
   inline int server_create(int port, int connection_backlog);
 
-  inline void server_serve_static(ResponseHeader res, std::string filename);
   inline SClient *server_handle_client(int server_fd);
-  inline void GET(std::string url, std::function<void(ResponseWritter)> func);
+  inline void GET(std::string url,std::string content,std::function<void(ResponseWritter)> func);
 };
 
-void Server::GET(std::string url, std::function<void(ResponseWritter)> func) {
+void Server::GET(std::string url, std::string content,std::function<void(ResponseWritter)> func) {
+  routes["url"] = content;
   func(ResponseWritter());
   return;
-};
-
-void Server::server_serve_static(ResponseHeader res, std::string filename) {
-  Utils u;
-  ResponseWritter response;
-
-  std::string body = u.read_file(filename);
-  // response.response_send(client->client_fd, res, body);
 };
 
 int Server::server_create(int port, int connection_backlog) {
@@ -88,7 +80,7 @@ int Server::server_create(int port, int connection_backlog) {
 
   client = server_handle_client(server_fd);
 
-  // close(client->client_fd);
+  close(client->client_fd);
   return server_fd;
 };
 
