@@ -9,6 +9,16 @@
 class Utils {
 public:
   inline std::string read_file(std::string filename);
+  inline std::string set_html(int status, std::string body);
+};
+
+std::string Utils::set_html(int status, std::string body) {
+  std::string string = "HTTP/1.1";
+  string += std::to_string(status);
+  string += "\r\nContent-Type: text/html";
+  string += "\r\nContent-Length: " + std::to_string(body.size());
+  string += "\r\n\r\n" + body;
+  return string;
 };
 
 std::string Utils::read_file(std::string filename) {

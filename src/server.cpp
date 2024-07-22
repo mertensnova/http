@@ -1,5 +1,4 @@
 #include "../includes/server.h"
-#include "../includes/request.h"
 #include <arpa/inet.h>
 #include <netdb.h>
 #include <sys/socket.h>
@@ -10,20 +9,18 @@ int main(int argc, char **argv) {
 
   Server server;
 
-  Request request;
+  int a = server.server_create(8000, 14);
+  while (1) {
 
-     // Example GET route
-    server.GET("/index", [&](ResponseHeader response) {
-        response.status = HTTP_OK;
-        response.message = "OK";
-        response.content_type = "text/html";
-        server.server_serve_static("index.html");
+    server.GET("/index", [&](ResponseWritter r) {
+      r.HTML(server.client->client_fd, HTTP_OK, "index.html");
     });
- // server.GET("/home", [&]() { server.server_serve_static("index.html"); });
 
-  // server.GET("/home", "home.html");
-  // server.GET("/about", "about.html");
+    server.GET("/home", [&](ResponseWritter r) {
+      r.HTML(server.client->client_fd, HTTP_OK, "home.html");
+    });
+  };
 
-  close(server.server_create(8000, 14));
+  close(a);
   return 0;
 };

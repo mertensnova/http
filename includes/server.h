@@ -34,11 +34,11 @@ public:
 
   inline void server_serve_static(ResponseHeader res, std::string filename);
   inline SClient *server_handle_client(int server_fd);
-  inline void GET(std::string url, std::function<void(ResponseHeader)> func);
+  inline void GET(std::string url, std::function<void(ResponseWritter)> func);
 };
 
-void Server::GET(std::string url, std::function<void(ResponseHeader)> func) {
-  func(ResponseHeader());
+void Server::GET(std::string url, std::function<void(ResponseWritter)> func) {
+  func(ResponseWritter());
   return;
 };
 
@@ -47,7 +47,7 @@ void Server::server_serve_static(ResponseHeader res, std::string filename) {
   ResponseWritter response;
 
   std::string body = u.read_file(filename);
-   response.response_send(client->client_fd, HTTP_OK, body);
+  // response.response_send(client->client_fd, res, body);
 };
 
 int Server::server_create(int port, int connection_backlog) {
@@ -87,9 +87,8 @@ int Server::server_create(int port, int connection_backlog) {
   }
 
   client = server_handle_client(server_fd);
-  server_serve_static("index.html");
 
-  close(client->client_fd);
+  // close(client->client_fd);
   return server_fd;
 };
 

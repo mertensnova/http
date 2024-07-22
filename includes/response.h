@@ -8,6 +8,7 @@
 #include <string>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <variant>
 #include <vector>
 
 struct ResponseHeader {
@@ -16,7 +17,6 @@ struct ResponseHeader {
   int content_length;
   std::string message;
   std::string body;
-  // Default constructor (if needed)
   ResponseHeader()
       : status(200), message("OK"), content_type("text/html"),
         content_length(0) {}
@@ -24,13 +24,31 @@ struct ResponseHeader {
 
 class ResponseWritter {
 public:
-  inline void handle_file_ext(std::string filename);
-  inline void response_send(int client_fd, int status, std::string message);
-  inline std::string response_write(int status, std::string body);
-  inline void response_send(ResponseHeader *res, int client_fd);
+  // inline std::string ResponseWrite(int status, std::string body);
+  // inline void ResponseSend(ResponseHeader *res, int client_fd);
+  inline void HTML(int client_fd, int status, std::string body);
+  inline void String(int client_fd, int status, std::string string);
 };
 
-void ResponseWritter::response_send(ResponseHeader *res, int client_fd) {
+void ResponseWritter::HTML(int client_fd, int status, std::string body) {
+
+  Utils u;
+  if (body.find(".html") != std::string::npos) {
+
+    std::string response = u.set_html(status, u.read_file(body));
+    send(client_fd, response.c_str(), response.size(), 0);
+    close(client_fd);
+    return;
+  };
+
+  std::string response = u.set_html(status, body);
+  send(client_fd, response.c_str(), response.size(), 0);
+  close(client_fd);
+  return;
+};
+
+/*
+void ResponseWritter::ResponseSend(ResponseHeader *res, int client_fd) {
   std::string response = "HTTP/1.1";
   response += std::to_string(res->status);
   response += "\r\nContent-Type: " + res->content_type;
@@ -41,7 +59,7 @@ void ResponseWritter::response_send(ResponseHeader *res, int client_fd) {
   return;
 };
 
-std::string ResponseWritter::response_write(int status, std::string message) {
+std::string ResponseWritter::ResponseWrite(int status, std::string message) {
   ResponseHeader *http = new (std::nothrow) ResponseHeader;
   http->status = status;
   http->content_type = "text/html";
@@ -50,5 +68,6 @@ std::string ResponseWritter::response_write(int status, std::string message) {
 
   return "";
 };
+*/
 
 #endif
