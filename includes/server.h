@@ -2,8 +2,6 @@
 #define SERVER_H
 
 #include <arpa/inet.h>
-#include <cerrno>
-#include <cstdio>
 #include <functional>
 #include <iostream>
 #include <netdb.h>
@@ -12,19 +10,22 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <unordered_map>
+
+#include "./request.h"
+#include "./response.h"
 
 #define LISTEN_BACKLOG 10
 #define BUFFER_SIZE 3000
 
 class Server {
 public:
+  size_t peer_fd;
   inline int ServerCreate(int port);
+  inline void GET(std::string url, std::function<void(ResponseWritter)> func);
 
 private:
   struct sockaddr_in socket_addr, peer_addr;
   int sock_fd; // Socket file descriptor
-  size_t peer_fd;
   char buffer[BUFFER_SIZE] = {0};
   inline void set(int port);
 };
@@ -33,6 +34,17 @@ void Server::set(int port) {
   socket_addr.sin_family = AF_INET;
   socket_addr.sin_port = htons(port);
   socket_addr.sin_addr.s_addr = INADDR_ANY;
+};
+
+void Server::GET(std::string url, std::function<void(ResponseWritter)> func) {
+  Request r;
+  std::string sbuff(buffer);
+  auto vec = r.request_parse_url(sbuff);
+
+  if ("/" + vec[0] == url) {
+    func(ResponseWritter());
+  };
+  return;
 };
 
 int Server::ServerCreate(int port) {
@@ -47,7 +59,7 @@ int Server::ServerCreate(int port) {
   };
 
   int reuse = 1;
-  if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) <
+  if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse)) <
       0) {
     perror("[!] setsockopt()");
     return -1;
@@ -70,7 +82,7 @@ int Server::ServerCreate(int port) {
       perror("[!] read()");
 
     std::string sbuffer(buffer);
-    std::cout << sbuffer << std::endl;
+    // std::cout << sbuffer << std::endl;
 
     close(peer_fd);
   };
