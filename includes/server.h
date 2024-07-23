@@ -3,113 +3,79 @@
 
 #include <arpa/inet.h>
 #include <cerrno>
+#include <cstdio>
 #include <functional>
 #include <iostream>
 #include <netdb.h>
-#include <new>
+#include <netinet/in.h>
 #include <string>
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <unordered_map>
-// #include <nlohmann/json.hpp>
 
-#include "./request.h"
-#include "./response.h"
-#include "./status.h"
-#include "utils.h"
-
-const int BUFFER_SIZE = 30720;
-
-struct SClient {
-  int client_fd;
-  std::string buffer;
-};
+#define LISTEN_BACKLOG 10
+#define BUFFER_SIZE 3000
 
 class Server {
 public:
-  SClient *client = new (std::nothrow) SClient();
-  std::unordered_map<std::string, std::string> routes;
-  inline int server_create(int port, int connection_backlog);
+  inline int ServerCreate(int port);
 
-  inline SClient *server_handle_client(int server_fd);
-  inline void GET(std::string url,std::string content,std::function<void(ResponseWritter)> func);
+private:
+  struct sockaddr_in socket_addr, peer_addr;
+  int sock_fd; // Socket file descriptor
+  size_t peer_fd;
+  char buffer[BUFFER_SIZE] = {0};
+  inline void set(int port);
 };
 
-void Server::GET(std::string url, std::string content,std::function<void(ResponseWritter)> func) {
-  routes["url"] = content;
-  func(ResponseWritter());
-  return;
+void Server::set(int port) {
+  socket_addr.sin_family = AF_INET;
+  socket_addr.sin_port = htons(port);
+  socket_addr.sin_addr.s_addr = INADDR_ANY;
 };
 
-int Server::server_create(int port, int connection_backlog) {
+int Server::ServerCreate(int port) {
 
-  if (!client) {
-    std::perror("Failed to allocate memory");
-    std::exit(EXIT_FAILURE);
-  };
+  set(port);
+  sock_fd = socket(AF_INET, SOCK_STREAM, 0);
 
-  int server_fd = socket(AF_INET, SOCK_STREAM, 0);
-
-  if (server_fd < 0) {
-    std::cerr << "[!]Error: Failed to create server socket\n";
+  if (bind(sock_fd, (struct sockaddr *)&socket_addr, sizeof(socket_addr)) ==
+      -1) {
+    perror("[!] bind()");
     return -1;
-  }
+  };
 
   int reuse = 1;
-  if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) <
+  if (setsockopt(sock_fd, SOL_SOCKET, SO_REUSEPORT, &reuse, sizeof(reuse)) <
       0) {
-    std::cerr << "[!]Error: setsockopt failed\n";
+    perror("[!] setsockopt()");
     return -1;
-  }
-
-  struct sockaddr_in server_addr;
-  server_addr.sin_family = AF_INET;
-  server_addr.sin_addr.s_addr = INADDR_ANY;
-  server_addr.sin_port = htons(port);
-
-  if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) !=
-      0) {
-    std::cerr << "[!]Error: Failed to bind to port \n" << port << std::endl;
+  };
+  if (listen(sock_fd, LISTEN_BACKLOG) == -1) {
+    perror("[!] listen()");
     return -1;
-  }
+  };
+  while (true) {
 
-  if (listen(server_fd, connection_backlog) != 0) {
-    return -1;
-  }
+    socklen_t peer_addr_size = sizeof(peer_addr);
 
-  client = server_handle_client(server_fd);
+    if ((peer_fd = accept(sock_fd, (struct sockaddr *)&peer_addr,
+                          &peer_addr_size)) == -1) {
+      perror("[!] accept()");
+      return -1;
+    };
 
-  close(client->client_fd);
-  return server_fd;
-};
+    if (read(peer_fd, &buffer, BUFFER_SIZE) == -1)
+      perror("[!] read()");
 
-SClient *Server::server_handle_client(int server_fd) {
+    std::string sbuffer(buffer);
+    std::cout << sbuffer << std::endl;
 
-  SClient *client_new = new (std::nothrow) SClient();
-
-  struct sockaddr_in client_addr;
-  int client_addr_len = sizeof(client_addr);
-
-  std::cout << "Waiting for a client to connect...\n";
-
-  ssize_t client_fd = accept(server_fd, (struct sockaddr *)&client_addr,
-                             (socklen_t *)&client_addr_len);
-
-  std::cout << "Client connected\n";
-
-  char buffer[BUFFER_SIZE] = {0};
-  ssize_t bytesReceived = read(client_fd, buffer, BUFFER_SIZE);
-
-  if (bytesReceived < 0) {
-    std::cerr << "Error reading from socket: " << hstrerror(errno) << "\n";
+    close(peer_fd);
   };
 
-  std::string str(buffer);
-
-  client_new->client_fd = client_fd;
-  client_new->buffer = str;
-  return client_new;
+  return 0;
 };
 
 #endif

@@ -9,19 +9,18 @@ int main(int argc, char **argv) {
 
   Server server;
 
+  server.ServerCreate(8000);
+
+  /*
   int a = server.server_create(8000, 14);
-  while (1) {
 
-    server.GET("/index","index.html", [&](ResponseWritter r) {
+    server.GET("/index", [&](ResponseWritter r) {
       r.HTML(server.client->client_fd, HTTP_OK, "index.html");
-      return;
     });
-
-    server.GET("/home","home.html", [&](ResponseWritter r) {
+    server.GET("/home", [&](ResponseWritter r) {
       r.HTML(server.client->client_fd, HTTP_OK, "home.html");
     });
-  };
+*/
 
-  close(a);
   return 0;
 };

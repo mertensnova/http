@@ -31,7 +31,6 @@ public:
 };
 
 void ResponseWritter::HTML(int client_fd, int status, std::string body) {
-
   Utils u;
   if (body.find(".html") != std::string::npos) {
     std::string response = u.set_html(status, u.read_file(body));
