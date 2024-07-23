@@ -12,7 +12,6 @@ int main(int argc, char **argv) {
 
   server.ServerCreate(8000);
 
-
   server.GET("/index", [&](ResponseWritter r) {
     r.HTML(server.peer_fd, HTTP_OK, "index.html");
   });

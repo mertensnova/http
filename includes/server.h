@@ -22,6 +22,7 @@ public:
   size_t peer_fd;
   inline int ServerCreate(int port);
   inline void GET(std::string url, std::function<void(ResponseWritter)> func);
+  inline void PeerHandler();
 
 private:
   struct sockaddr_in socket_addr, peer_addr;
@@ -68,6 +69,12 @@ int Server::ServerCreate(int port) {
     perror("[!] listen()");
     return -1;
   };
+
+  PeerHandler();
+  return 0;
+};
+
+void Server::PeerHandler() {
   while (true) {
 
     socklen_t peer_addr_size = sizeof(peer_addr);
@@ -75,7 +82,7 @@ int Server::ServerCreate(int port) {
     if ((peer_fd = accept(sock_fd, (struct sockaddr *)&peer_addr,
                           &peer_addr_size)) == -1) {
       perror("[!] accept()");
-      return -1;
+      return;
     };
 
     if (read(peer_fd, &buffer, BUFFER_SIZE) == -1)
@@ -83,11 +90,8 @@ int Server::ServerCreate(int port) {
 
     std::string sbuffer(buffer);
     // std::cout << sbuffer << std::endl;
-
     close(peer_fd);
   };
-
-  return 0;
 };
 
 #endif
