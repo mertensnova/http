@@ -8,7 +8,6 @@ class Request {
 
 public:
   inline std::vector<std::string> request_parse_url(std::string request);
-  // inline std::string request_check_method(std::string request);
 };
 
 std::vector<std::string> Request::request_parse_url(std::string request) {

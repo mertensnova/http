@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <unordered_map>
 
 #include "./request.h"
 #include "./response.h"
@@ -21,10 +22,11 @@ class Server {
 public:
   size_t peer_fd;
   inline int ServerCreate(int port);
-  inline void GET(std::string url, std::function<void(ResponseWritter)> func);
+  inline void GET(std::string url, std::string content);
   inline void PeerHandler();
 
 private:
+  std::unordered_map<std::string, std::string> routes;
   struct sockaddr_in socket_addr, peer_addr;
   int sock_fd; // Socket file descriptor
   char buffer[BUFFER_SIZE] = {0};
@@ -37,14 +39,8 @@ void Server::set(int port) {
   socket_addr.sin_addr.s_addr = INADDR_ANY;
 };
 
-void Server::GET(std::string url, std::function<void(ResponseWritter)> func) {
-  Request r;
-  std::string sbuff(buffer);
-  auto vec = r.request_parse_url(sbuff);
-
-  if ("/" + vec[0] == url) {
-    func(ResponseWritter());
-  };
+void Server::GET(std::string url, std::string content) {
+  routes[url] = content;
   return;
 };
 
@@ -89,7 +85,15 @@ void Server::PeerHandler() {
       perror("[!] read()");
 
     std::string sbuffer(buffer);
-    // std::cout << sbuffer << std::endl;
+    Request re;
+    ResponseWritter r;
+
+    auto url = re.request_parse_url(sbuffer);
+    if (!routes.count("/" + url[0])) {
+      continue;
+    };
+
+    r.HTML(peer_fd, 200, routes["/" + url[0]]);
     close(peer_fd);
   };
 };

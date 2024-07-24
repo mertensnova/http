@@ -10,6 +10,7 @@ class Utils {
 public:
   inline std::string read_file(std::string filename);
   inline std::string set_html(int status, std::string body);
+  inline void log(int status, std::string path);
 };
 
 std::string Utils::set_html(int status, std::string body) {

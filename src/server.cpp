@@ -5,22 +5,25 @@
 #include <unistd.h>
 
 #include "../includes/server.h"
-#include "../includes/status.h"
+
 int main(int argc, char **argv) {
 
   Server server;
 
-  server.ServerCreate(8000);
-
-  server.GET("/index", [&](ResponseWritter r) {
-    r.HTML(server.peer_fd, HTTP_OK, "index.html");
-  });
-
+  server.GET("/index", "index.html");
+  server.GET("/home", "home.html");
+  /*
+    server.GET("/index", [&](ResponseWritter r) {
+      r.HTML(server.peer_fd, HTTP_OK, "index.html");
+    });
+  */
   /*
   server.GET("/home", [&](ResponseWritter r) {
     r.HTML(server.client->client_fd, HTTP_OK, "home.html");
   });
   */
+
+  server.ServerCreate(8000);
 
   return 0;
 };
